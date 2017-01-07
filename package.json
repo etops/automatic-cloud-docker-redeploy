@@ -1,0 +1,25 @@
+{
+  "name": "automatic-cloud-docker-redeploy",
+  "version": "1.0.0",
+  "description": "This docker image checks the specified url continuously and redeploy's the service on cloud docker when it's down.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon -L app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ckaeslin@github.com/etops/automatic-cloud-docker-redeploy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/etops/automatic-cloud-docker-redeploy/issues"
+  },
+  "homepage": "https://github.com/etops/automatic-cloud-docker-redeploy#readme",
+  "dependencies": {
+    "bunyan": "^1.8.5",
+    "dockercloud": "^0.2.2",
+    "nodemon": "^1.11.0"
+  }
+}
