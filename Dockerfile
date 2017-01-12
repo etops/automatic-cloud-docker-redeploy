@@ -1,16 +1,7 @@
-FROM node:6.9-alpine
+FROM python:2.7-alpine
 
 MAINTAINER Nectar Financial
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+ADD doRedeploy.py /
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
-
-# Bundle app source
-COPY app.js /usr/src/app
-
-CMD [ "npm", "start" ]
+CMD [ "python", "./doRedeploy.py" }

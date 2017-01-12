@@ -2,7 +2,7 @@ const bunyan = require('bunyan');
 const log = bunyan.createLogger({name: "automatic-cloud-docker-redeploy"});
 const rp = require('request-promise');
 const errors = require('request-promise/errors');
-const DockerCloud = require('dockercloud');
+import DockerCloud from 'dockercloud'
 
 const urlToCheck = process.env.SERVER_URL;
 const dockerServiceName = process.env.DOCKER_SERVICE_NAME;
@@ -18,13 +18,10 @@ if(!dockerServiceName) {
   log.fatal('missing DOCKER_SERVICE_NAME environment variable')
 }
 
-const service = await dockerCloud.findServiceById(dockerServiceID);
-
 log.info("started");
 
-setTimeout(checkServerStatus, 15*60*1000);
-
 const checkServerStatus = () => {
+  log.info("check status");
   rp({ uri: urlToCheck, resolveWithFullResponse: true })
   .then(response => {
     log.info(`${urlToCheck} is running`);
@@ -32,13 +29,25 @@ const checkServerStatus = () => {
   .catch(errors.StatusCodeError, function (reason) {
       // The server responded with a status codes other than 2xx.
       // Check reason.statusCode
-      if(reasons.statusCode === 502) {
+      log.info(reason.statusCode);
+      if(reason.statusCode === 502) {
+        console.log("====>");
         // login to docker
-        const dockerCloud = new DockerCloud(dockerUsername, dockerPassword);
-        dockerCloud.redeployService(service)
-          .then(() => {
-            log.info(`${urlToCheck} was restarted`);
+        const dockerCloud = new DockerCloud(dockerUsername, dockerPassword, 'etops');
+        console.log(dockerServiceID);
+        dockerCloud.findServiceById(dockerServiceID)
+          .then((service) => {
+            console.log(service);
+            dockerCloud.redeployService(service)
+              .then(() => {
+                log.info(`${urlToCheck} was restarted`);
+              }).catch((err) => {
+                console.log(err);
+              });
+          }).catch((err) => {
+            console.log(err);
           });
+
       }
   })
   .catch(errors.RequestError, function (reason) {
@@ -47,7 +56,10 @@ const checkServerStatus = () => {
       log.fatal(reason);
   });
 
-  setTimeout(checkServerStatus, (Math.random()*15+5)*60*1000);
+  //setTimeout(checkServerStatus, (Math.random()*15+5)*1*1000);
 }
+
+
+setTimeout(checkServerStatus, 0.5*10*1000);
 
 
