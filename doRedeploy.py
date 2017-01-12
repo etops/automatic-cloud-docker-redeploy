@@ -7,12 +7,13 @@ serverUrl = os.getenv('SERVER_URL')
 serviceID = os.getenv('DOCKER_SERVICE_ID')
 dockercloud.user = os.getenv('DOCKER_USERNAME')
 dockercloud.apikey  = os.getenv('DOCKER_API_KEY')
+urlToCheck = os.getenv('SERVICE_URL')
 dockercloud.namespace = "etops"
 
 def healthChecker():
   threading.Timer(10*60, work).start ()
   try:
-      urllib2.urlopen('https://test-back.nectarfinancial.com/')
+      urllib2.urlopen(urlToCheck)
   except urllib2.HTTPError, e:
       print(e.code)
       if e.code == 502:
